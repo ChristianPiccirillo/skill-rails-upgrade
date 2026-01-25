@@ -41,19 +41,19 @@ When invoked in a Rails project, this skill:
 
 ### OpenCode
 
-1. Create the skills directory if it doesn't exist:
+1. Create the skill directory if it doesn't exist:
    ```bash
-   mkdir -p ~/.config/opencode/skills
+   mkdir -p ~/.config/opencode/skill
    ```
 
-2. Clone or copy this skill to the skills directory:
+2. Clone or copy this skill to the skill directory:
    ```bash
-   git clone https://github.com/rzolkos/skill-rails-upgrade.git ~/.config/opencode/skills/rails-upgrade
+   git clone https://github.com/rzolkos/skill-rails-upgrade.git ~/.config/opencode/skill/rails-upgrade
    ```
 
    Or copy manually:
    ```bash
-   cp -r /path/to/skill-rails-upgrade ~/.config/opencode/skills/rails-upgrade
+   cp -r /path/to/skill-rails-upgrade ~/.config/opencode/skill/rails-upgrade
    ```
 
 3. Restart OpenCode to load the skill.
