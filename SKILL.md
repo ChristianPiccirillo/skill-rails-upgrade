@@ -1,11 +1,11 @@
 ---
 name: rails-upgrade
-description: Analyze Rails application upgrade path. Checks current version, finds latest release, fetches upgrade notes and diffs, then summarizes upgrade complexity.
+description: Analyze Rails application upgrade path. Checks current version, finds latest release, fetches upgrade notes and diffs, then performs selective upgrade preserving local customizations.
 ---
 
 # Rails Upgrade Analyzer
 
-Analyze the current Rails application and provide a comprehensive upgrade assessment.
+Analyze the current Rails application and provide a comprehensive upgrade assessment with selective file merging.
 
 ## Step 1: Verify Rails Application
 
@@ -116,8 +116,8 @@ List the most important changes the user needs to handle:
 2. Review deprecation warnings in current version
 3. Update Gemfile with new Rails version
 4. Run `bundle update rails`
-5. Run `rails app:update` (interactive config updater)
-6. Address breaking changes
+5. **DO NOT run `rails app:update` directly** - use the selective merge process below
+6. Run database migrations
 7. Run test suite
 8. Review and update deprecated code
 
@@ -127,8 +127,177 @@ List the most important changes the user needs to handle:
 - Rails Diff: https://railsdiff.org/{current}/{target}
 - Release Notes: https://github.com/rails/rails/releases/tag/v{target}
 
+---
+
+## Step 8: Selective File Update (replaces `rails app:update`)
+
+**IMPORTANT:** Do NOT run `rails app:update` as it overwrites files without considering local customizations. Instead, follow this selective merge process:
+
+### 8.1: Detect Local Customizations
+
+Before any upgrade, identify files with local customizations:
+
+```bash
+# Check for uncommitted changes
+git status
+
+# List config files that differ from a fresh Rails app
+# These are the files we need to be careful with
+git diff HEAD --name-only -- config/ bin/ public/
+```
+
+Create a mental list of files in these categories:
+- **Custom config files**: Files with project-specific settings (i18n, mailer, etc.)
+- **Modified bin scripts**: Scripts with custom behavior (bin/dev with foreman, etc.)
+- **Standard files**: Files that haven't been customized
+
+### 8.2: Analyze Required Changes from Railsdiff
+
+Based on the railsdiff output from Step 6, categorize each changed file:
+
+| Category | Action | Example |
+|----------|--------|---------|
+| **New files** | Create directly | `config/initializers/new_framework_defaults_X_Y.rb` |
+| **Unchanged locally** | Safe to overwrite | `public/404.html` (if not customized) |
+| **Customized locally** | Manual merge needed | `config/application.rb`, `bin/dev` |
+| **Comment-only changes** | Usually skip | Minor comment updates in config files |
+
+### 8.3: Create Upgrade Plan
+
+Present the user with a clear upgrade plan:
+
+```
+## Upgrade Plan: Rails X.Y.Z → A.B.C
+
+### New Files (will be created):
+- config/initializers/new_framework_defaults_A_B.rb
+- bin/ci (new CI script)
+
+### Safe to Update (no local customizations):
+- public/400.html
+- public/404.html
+- public/500.html
+
+### Needs Manual Merge (local customizations detected):
+- config/application.rb
+  └─ Local: i18n configuration
+  └─ Rails: [describe new Rails changes if any]
+
+- config/environments/development.rb
+  └─ Local: letter_opener mailer config
+  └─ Rails: [describe new Rails changes]
+
+- bin/dev
+  └─ Local: foreman + Procfile.dev setup
+  └─ Rails: changed to simple ruby script
+
+### Skip (comment-only or irrelevant changes):
+- config/puma.rb (only comment changes)
+```
+
+### 8.4: Execute Upgrade Plan
+
+After user confirms the plan:
+
+#### For New Files:
+Create them directly using the content from railsdiff or by extracting from a fresh Rails app:
+
+```bash
+# Generate a temporary fresh Rails app to extract new files
+cd /tmp && rails new rails_template --skip-git --skip-bundle
+# Then copy needed files
+```
+
+Or use the Rails generator for specific files:
+```bash
+bin/rails app:update:configs  # Only updates config files, still interactive
+```
+
+#### For Safe Updates:
+Overwrite these files as they have no local customizations.
+
+#### For Manual Merges:
+For each file needing merge, show the user:
+
+1. **Current local version** (their customizations)
+2. **New Rails default** (from railsdiff)
+3. **Suggested merged version** that:
+   - Keeps all local customizations
+   - Adds only essential new Rails functionality
+   - Removes deprecated settings
+
+Example merge for `config/application.rb`:
+```ruby
+# KEEP local customizations:
+config.i18n.available_locales = [:de, :en]
+config.i18n.default_locale = :de
+config.i18n.fallbacks = [:en]
+
+# ADD new Rails 8.1 settings if needed:
+# (usually none required - new defaults come via new_framework_defaults file)
+```
+
+### 8.5: Handle Active Storage Migrations
+
+After file updates, run any new migrations:
+
+```bash
+bin/rails db:migrate
+```
+
+Check for new migrations that were added:
+```bash
+ls -la db/migrate/ | tail -10
+```
+
+### 8.6: Verify Upgrade
+
+After completing the merge:
+
+1. Start the Rails server and check for errors:
+   ```bash
+   bin/dev  # or bin/rails server
+   ```
+
+2. Check the Rails console:
+   ```bash
+   bin/rails console
+   ```
+
+3. Run the test suite:
+   ```bash
+   bin/rails test
+   ```
+
+4. Review deprecation warnings in logs
+
+---
+
+## Step 9: Finalize Framework Defaults
+
+After verifying the app works:
+
+1. Review `config/initializers/new_framework_defaults_X_Y.rb`
+2. Enable each new default one by one, testing after each
+3. Once all defaults are enabled and tested, update `config/application.rb`:
+   ```ruby
+   config.load_defaults X.Y  # Update to new version
+   ```
+4. Delete the `new_framework_defaults_X_Y.rb` file
+
+---
+
 ## Error Handling
 
 - If `gh` CLI is not authenticated, instruct the user to run `gh auth login`
 - If railsdiff.org doesn't have the exact versions, try with major.minor.0 versions
 - If the app is already on the latest version, congratulate the user and note any upcoming releases
+- If local customizations would be lost, ALWAYS stop and show the user what would be overwritten before proceeding
+
+## Key Principles
+
+1. **Never overwrite without checking** - Always check for local customizations first
+2. **Preserve user intent** - Local customizations exist for a reason
+3. **Minimal changes** - Only add what's necessary for the new Rails version
+4. **Transparency** - Show the user exactly what will change before doing it
+5. **Reversibility** - User should be able to `git checkout` to restore if needed
