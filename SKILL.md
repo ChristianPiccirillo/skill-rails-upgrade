@@ -80,9 +80,94 @@ This shows:
 
 Summarize the key file changes.
 
-## Step 7: Generate Upgrade Summary
+## Step 7: Check JavaScript Dependencies
 
-Provide a comprehensive summary including:
+Rails applications often include JavaScript packages that should be updated alongside Rails. Check for and report on these dependencies.
+
+### 7.1: Identify JS Package Manager
+
+Check which package manager the app uses:
+
+```bash
+# Check for package.json (npm/yarn)
+ls package.json 2>/dev/null
+
+# Check for importmap (Rails 7+)
+ls config/importmap.rb 2>/dev/null
+```
+
+### 7.2: Check Rails-Related JS Packages
+
+If `package.json` exists, check for these Rails-related packages:
+
+```bash
+# Extract current versions of Rails-related packages
+cat package.json | grep -E '"@hotwired/|"@rails/|"stimulus"|"turbo-rails"' || echo "No Rails JS packages found"
+```
+
+**Key packages to check:**
+
+| Package | Purpose | Version Alignment |
+|---------|---------|-------------------|
+| `@hotwired/turbo-rails` | Turbo Drive/Frames/Streams | Should match Rails version era |
+| `@hotwired/stimulus` | Stimulus JS framework | Generally stable across Rails versions |
+| `@rails/actioncable` | WebSocket support | Should match Rails version |
+| `@rails/activestorage` | Direct uploads | Should match Rails version |
+| `@rails/actiontext` | Rich text editing | Should match Rails version |
+| `@rails/request.js` | Rails UJS replacement | Should match Rails version era |
+
+### 7.3: Check for Updates
+
+For npm/yarn projects, check for available updates:
+
+```bash
+# Using npm
+npm outdated @hotwired/turbo-rails @hotwired/stimulus @rails/actioncable @rails/activestorage 2>/dev/null
+
+# Or check latest versions directly
+npm view @hotwired/turbo-rails version 2>/dev/null
+npm view @rails/actioncable version 2>/dev/null
+```
+
+### 7.4: Check Importmap Pins (if applicable)
+
+If the app uses importmap-rails, check `config/importmap.rb` for pinned versions:
+
+```bash
+cat config/importmap.rb | grep -E 'pin.*turbo|pin.*stimulus|pin.*@rails' || echo "No importmap pins found"
+```
+
+To update importmap pins:
+```bash
+bin/importmap pin @hotwired/turbo-rails
+bin/importmap pin @hotwired/stimulus
+```
+
+### 7.5: JS Dependency Summary
+
+Include in the upgrade summary:
+
+```
+### JavaScript Dependencies
+
+**Package Manager**: [npm/yarn/importmap/none]
+
+| Package | Current | Latest | Action |
+|---------|---------|--------|--------|
+| @hotwired/turbo-rails | 8.0.4 | 8.0.12 | Update recommended |
+| @rails/actioncable | 7.1.0 | 8.0.0 | Update with Rails |
+| ... | ... | ... | ... |
+
+**Recommended JS Updates:**
+- Run `npm update @hotwired/turbo-rails` (or yarn equivalent)
+- Run `npm update @rails/actioncable @rails/activestorage` to match Rails version
+```
+
+---
+
+## Step 8: Generate Upgrade Summary
+
+Provide a comprehensive summary including all findings from Steps 1-7:
 
 ### Version Information
 - Current version: X.Y.Z
@@ -116,10 +201,11 @@ List the most important changes the user needs to handle:
 2. Review deprecation warnings in current version
 3. Update Gemfile with new Rails version
 4. Run `bundle update rails`
-5. **DO NOT run `rails app:update` directly** - use the selective merge process below
-6. Run database migrations
-7. Run test suite
-8. Review and update deprecated code
+5. Update JavaScript dependencies (see JS Dependencies section)
+6. **DO NOT run `rails app:update` directly** - use the selective merge process below
+7. Run database migrations
+8. Run test suite
+9. Review and update deprecated code
 
 ### Resources
 
@@ -129,11 +215,11 @@ List the most important changes the user needs to handle:
 
 ---
 
-## Step 8: Selective File Update (replaces `rails app:update`)
+## Step 9: Selective File Update (replaces `rails app:update`)
 
 **IMPORTANT:** Do NOT run `rails app:update` as it overwrites files without considering local customizations. Instead, follow this selective merge process:
 
-### 8.1: Detect Local Customizations
+### 9.1: Detect Local Customizations
 
 Before any upgrade, identify files with local customizations:
 
@@ -151,7 +237,7 @@ Create a mental list of files in these categories:
 - **Modified bin scripts**: Scripts with custom behavior (bin/dev with foreman, etc.)
 - **Standard files**: Files that haven't been customized
 
-### 8.2: Analyze Required Changes from Railsdiff
+### 9.2: Analyze Required Changes from Railsdiff
 
 Based on the railsdiff output from Step 6, categorize each changed file:
 
@@ -162,7 +248,7 @@ Based on the railsdiff output from Step 6, categorize each changed file:
 | **Customized locally** | Manual merge needed | `config/application.rb`, `bin/dev` |
 | **Comment-only changes** | Usually skip | Minor comment updates in config files |
 
-### 8.3: Create Upgrade Plan
+### 9.3: Create Upgrade Plan
 
 Present the user with a clear upgrade plan:
 
@@ -195,7 +281,7 @@ Present the user with a clear upgrade plan:
 - config/puma.rb (only comment changes)
 ```
 
-### 8.4: Execute Upgrade Plan
+### 9.4: Execute Upgrade Plan
 
 After user confirms the plan:
 
@@ -237,7 +323,7 @@ config.i18n.fallbacks = [:en]
 # (usually none required - new defaults come via new_framework_defaults file)
 ```
 
-### 8.5: Handle Active Storage Migrations
+### 9.5: Handle Active Storage Migrations
 
 After file updates, run any new migrations:
 
@@ -250,7 +336,7 @@ Check for new migrations that were added:
 ls -la db/migrate/ | tail -10
 ```
 
-### 8.6: Verify Upgrade
+### 9.6: Verify Upgrade
 
 After completing the merge:
 
@@ -273,7 +359,7 @@ After completing the merge:
 
 ---
 
-## Step 9: Finalize Framework Defaults
+## Step 10: Finalize Framework Defaults
 
 After verifying the app works:
 
