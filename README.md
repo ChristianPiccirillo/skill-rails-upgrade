@@ -29,7 +29,7 @@ When invoked in a Rails project, this skill:
 
 2. Clone or copy this skill to the skills directory:
    ```bash
-   git clone https://github.com/rzolkos/skill-rails-upgrade.git ~/.claude/skills/rails-upgrade
+   git clone https://github.com/robzolkos/skill-rails-upgrade.git ~/.claude/skills/rails-upgrade
    ```
 
    Or copy manually:
@@ -48,7 +48,7 @@ When invoked in a Rails project, this skill:
 
 2. Clone or copy this skill to the skill directory:
    ```bash
-   git clone https://github.com/rzolkos/skill-rails-upgrade.git ~/.config/opencode/skill/rails-upgrade
+   git clone https://github.com/robzolkos/skill-rails-upgrade.git ~/.config/opencode/skill/rails-upgrade
    ```
 
    Or copy manually:
