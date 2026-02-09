@@ -1,0 +1,76 @@
+*{margin: 0;
+  box-sizing: border-box;
+}
+
+.contenitore{
+  margin: 25%;
+  background-color: rgba(0, 0, 0, 0.5);
+  margin-top: 80px;
+  padding: 40px;
+  border-radius: 15px;
+
+}
+
+body{
+  background-image: url(sfondo.jpg);
+  background-size: cover;
+}
+
+header, nav{
+  text-align: center;
+}
+
+header>h1{
+ color:rgb(0, 221, 0);
+}
+
+.logo{
+ width: 35%;
+}
+
+nav{
+  background-color:rgb(0, 221, 0);
+  padding: 10px;
+  margin-bottom: 5px;
+  border-radius: 5px;
+}
+
+div>h2{
+  display: inline-block;
+  color: white;
+  margin-top: 10px;
+  font-family: 'Fjalla One', sans-serif;
+}
+
+div>h4{
+  color: white;
+  margin-top: 5px;
+  font-size: 11px;
+  font-family:
+}
+
+.statocarica{
+  margin-top: 3px;
+}
+
+.percentuale1{
+  background-color: green;
+  padding: 10px;
+  width: 80%;
+  border-radius: 5px;
+  margin-bottom: 15px;
+}
+
+.percentuale2{
+  background-color: orange;
+  padding: 10px;
+  width: 50%;
+  border-radius: 5px;
+}
+
+.percentuale3{
+  background-color: red;
+  padding: 10px;
+  width: 19%;
+  border-radius: 5px;
+}
